@@ -1,0 +1,108 @@
+// Zellijの設定ファイル(公式：https://zellij.dev/documentation)
+// このファイルは、後でZellijの設定ディレクトリに移動する予定です。
+// Windowsの場合、通常は %APPDATA%\zellij に配置します。
+// 具体的には、C:\Users\ユーザー名\AppData\Roaming\zellij に該当フォルダーがあることが大半です。
+// 設定ディレクトリの確認方法:
+//   echo $ZELLIJ_CONFIG_DIR
+//   zellij setup --config-dir
+
+// ペイン内のプロセスが終了してもペインを自動で閉じないようにする
+// これにより、Ctrl+Cでシェルが終了してもペインが閉じなくなる
+close_on_exit false
+
+// スクロールバックバッファのサイズを増やす (デフォルト: 10000)
+// ペイン内でスクロールできる行数を指定します
+scroll_buffer_size 50000
+
+// マウスモードを有効にする (デフォルト: true)
+// マウスによるペインの選択、リサイズ、スクロールなどを有効にします
+mouse_mode true
+
+// UIを簡略化する
+// ペインの周りのフレームやタブバーをよりシンプルでコンパクトな表示にします
+simplified_ui true
+
+// テーマを設定 (デフォルト: default)
+// "default", "gruvbox", "dracula", "solarized"などが内蔵されています
+theme "dracula"
+
+// デフォルトレイアウトを指定する場合
+// default_layout "/path/to/my/favorite-layout.kdl"
+
+// キーバインドの設定
+keybinds {
+    // ペインモードのキーバインド
+    pane {
+        // tmuxライクなプレフィックスキーを設定する場合
+        // bind "Ctrl b" { SwitchToMode "Normal"; }
+
+        // Vimライクなペイン移動
+        bind "Ctrl h" { MoveFocus "Left"; }
+        bind "Ctrl j" { MoveFocus "Down"; }
+        bind "Ctrl k" { MoveFocus "Up"; }
+        bind "Ctrl l" { MoveFocus "Right"; }
+
+        // ペインのリサイズ
+        bind "Ctrl H" { Resize "Left"; }
+        bind "Ctrl J" { Resize "Down"; }
+        bind "Ctrl K" { Resize "Up"; }
+        bind "Ctrl L" { Resize "Right"; }
+
+        // ペインを新しいプロセスで分割
+        bind "Alt h" { SplitHorizontally; }
+        bind "Alt v" { SplitVertically; }
+
+        // 不要なキーの無効化
+        // unbind "Alt h"
+    }
+
+    // タブモードのキーバインド
+    tab {
+        // Vimライクなタブ移動
+        bind "Ctrl h" { GoToPreviousTab; }
+        bind "Ctrl l" { GoToNextTab; }
+
+        // 新しいタブを作成
+        bind "Alt t" { NewTab; }
+
+        // タブを閉じる
+        bind "Alt w" { CloseTab; }
+    }
+
+    // レンダリングモードのキーバインド
+    resize {
+        // 方向キーでペインのリサイズ
+        bind "h" { Resize "Left"; }
+        bind "j" { Resize "Down"; }
+        bind "k" { Resize "Up"; }
+        bind "l" { Resize "Right"; }
+
+        // ペインのリサイズを終了
+        bind "Enter" { SwitchToMode "Normal"; }
+        bind "Esc" { SwitchToMode "Normal"; }
+    }
+
+    // ロックモードのキーバインド
+    locked {
+        // ロックを解除
+        bind "Ctrl g" { SwitchToMode "Normal"; }
+    }
+}
+
+// プラグインの設定
+plugins {
+    // コンパクトなタブバー
+    tab-bar location="zellij:compact-bar"
+
+    // ステータスバー
+    status-bar {
+        // 時計プラグイン
+        plugin location="zellij:clock" {
+            format_24h true
+            clock_format "%Y-%m-%d %H:%M:%S"
+        }
+    }
+
+    // コンパクトなステータスバー (タブバーとステータスバーを統合)
+    // strider location="zellij:strider"
+}

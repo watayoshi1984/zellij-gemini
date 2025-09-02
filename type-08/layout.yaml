@@ -1,0 +1,42 @@
+session_name: "gemini-squad-8"
+tabs:
+  - name: "Executive Control"
+    layout:
+      direction: Vertical
+      parts:
+        # President層（最上段）
+        - name: "a"
+          command: "startup_scripts/run_a.sh"
+          size: 1
+        # Boss層（中段）
+        - direction: Horizontal
+          parts:
+            - name: "b"
+              command: "startup_scripts/run_b.sh"
+              size: 1
+            - name: "f"
+              command: "startup_scripts/run_f.sh"
+              size: 1
+          size: 1
+        # Worker層（下段）
+        - direction: Horizontal
+          parts:
+            # Boss Bの配下Workers
+            - direction: Vertical
+              parts:
+                - name: "c"
+                  command: "startup_scripts/run_c.sh"
+                - name: "d"
+                  command: "startup_scripts/run_d.sh"
+                - name: "e"
+                  command: "startup_scripts/run_e.sh"
+              size: 3
+            # Boss Fの配下Workers
+            - direction: Vertical
+              parts:
+                - name: "g"
+                  command: "startup_scripts/run_g.sh"
+                - name: "h"
+                  command: "startup_scripts/run_h.sh"
+              size: 2
+          size: 2

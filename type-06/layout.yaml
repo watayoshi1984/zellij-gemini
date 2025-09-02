@@ -1,0 +1,23 @@
+# layout.yaml (6-Pane Version)
+session_name: "gemini-squad-6"
+tabs:
+  - name: "Main Control"
+    layout:
+      direction: Vertical
+      parts:
+        - direction: Horizontal
+          parts:
+            - name: "a"
+              command: "startup_scripts/run_a.sh"
+            - name: "b"
+              command: "startup_scripts/run_b.sh"
+        - direction: Horizontal
+          parts:
+            - name: "c"
+              command: "startup_scripts/run_c.sh"
+            - name: "d"
+              command: "startup_scripts/run_d.sh"
+            - name: "e"
+              command: "startup_scripts/run_e.sh"
+            - name: "f"
+              command: "startup_scripts/run_f.sh"

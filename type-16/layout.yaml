@@ -1,0 +1,64 @@
+session_name: "gemini-enterprise-16"
+tabs:
+  - name: "Enterprise Control"
+    layout:
+      direction: Vertical
+      parts:
+        # President層
+        - name: "a"
+          command: "startup_scripts/run_a.sh"
+          size: 1
+        # Boss層（4 Bosses）
+        - direction: Horizontal
+          parts:
+            - name: "b"  # Technical Boss
+              command: "startup_scripts/run_b.sh"
+            - name: "f"  # Product Boss
+              command: "startup_scripts/run_f.sh"
+            - name: "j"  # Marketing Boss
+              command: "startup_scripts/run_j.sh"
+            - name: "n"  # Strategy Boss
+              command: "startup_scripts/run_n.sh"
+          size: 1
+        # Worker層（12 Workers）
+        - direction: Horizontal
+          parts:
+            # Technical Group (c,d,e)
+            - direction: Vertical
+              parts:
+                - name: "c"
+                  command: "startup_scripts/run_c.sh"
+                - name: "d"
+                  command: "startup_scripts/run_d.sh"
+                - name: "e"
+                  command: "startup_scripts/run_e.sh"
+              size: 3
+            # Product Group (g,h,i)
+            - direction: Vertical
+              parts:
+                - name: "g"
+                  command: "startup_scripts/run_g.sh"
+                - name: "h"
+                  command: "startup_scripts/run_h.sh"
+                - name: "i"
+                  command: "startup_scripts/run_i.sh"
+              size: 3
+            # Marketing Group (k,l,m)
+            - direction: Vertical
+              parts:
+                - name: "k"
+                  command: "startup_scripts/run_k.sh"
+                - name: "l"
+                  command: "startup_scripts/run_l.sh"
+                - name: "m"
+                  command: "startup_scripts/run_m.sh"
+              size: 3
+            # Strategy Group (o,p)
+            - direction: Vertical
+              parts:
+                - name: "o"
+                  command: "startup_scripts/run_o.sh"
+                - name: "p"
+                  command: "startup_scripts/run_p.sh"
+              size: 2
+          size: 3
