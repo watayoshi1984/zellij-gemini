@@ -38,10 +38,14 @@ else
     echo ".envファイルは既に存在します。"
 fi
 
-# startup_scriptsディレクトリが存在しない場合は作成
-if [ ! -d "startup_scripts" ]; then
-    mkdir -p startup_scripts
-fi
+# 古いstartup_scriptsとログを削除
+echo "クリーンアップ処理を実行中..."
+rm -rf startup_scripts
+rm -f log
+echo "クリーンアップ完了。"
+
+# startup_scriptsディレクトリを作成
+mkdir -p startup_scripts
 
 # テンプレートからstartup_scriptsにコピー
 echo "startup_scriptsファイルを生成中..."
