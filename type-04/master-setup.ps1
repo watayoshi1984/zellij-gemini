@@ -18,10 +18,11 @@ try {
 
 # WSL内で実行する一連のコマンドを定義
 # 1. WSLパスに移動 (cd)
-# 2. 起動スクリプトに実行権限を付与 (chmod)
-# 3. 各ワーカーのAPIキー設定を促す
-# 4. Zellijをレイアウトファイル付きで起動
-$command = "cd '$wslPath' && chmod +x startup_scripts/*.sh ask_flat.sh && echo 'Please set your API keys (Gemini or Claude) in the startup_scripts/run_*.sh files.' && echo 'After setting the API keys, run the following command to start Zellij:' && echo 'zellij --layout layout.kdl'"
+# 2. 既存のZellijセッションをクリーンアップ
+# 3. 起動スクリプトに実行権限を付与 (chmod)
+# 4. 各ワーカーのAPIキー設定を促す
+# 5. Zellijをレイアウトファイル付きで起動
+$command = "cd '$wslPath' && echo 'Cleaning up existing Zellij sessions...' && pkill -f zellij 2>/dev/null || true && sleep 1 && chmod +x startup_scripts/*.sh ask_flat.sh && echo 'Please set your API keys (Gemini or Claude) in the startup_scripts/run_*.sh files.' && echo 'After setting the API keys, run the following command to start Zellij:' && echo 'zellij --layout layout.kdl'"
 
 # WSLを起動し、上記コマンドを実行
 wsl.exe -- bash -c $command

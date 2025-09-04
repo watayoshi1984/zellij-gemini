@@ -5,6 +5,6 @@ source ../load_env.sh
 export GEMINI_API_KEY="${GEMINI_API_KEY_L:-YOUR_API_KEY_FOR_L}" # ★★★ 環境変数GEMINI_API_KEY_Lを設定 ★★★
 export CLAUDE_API_KEY="${CLAUDE_API_KEY_L:-YOUR_API_KEY_FOR_L}" # ★★★ 環境変数CLAUDE_API_KEY_Lを設定 ★★★
 clear
-bat --paging=always ../instructions/l_worker.md
+/usr/local/bin/bat --paging=always ../instructions/l_worker.md
 echo "PANE 'l' (Worker) IS READY. (Press 'q' to exit viewer)"
 exec $SHELL

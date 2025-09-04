@@ -1,0 +1,17 @@
+layout {
+    pane size=1 borderless=true {
+        plugin location="zellij:tab-bar"
+    }
+    // Top row: President (a) and Boss (b)
+    pane split_direction="horizontal" {
+        pane command="startup_scripts/run_a.sh" name="a"
+        pane command="startup_scripts/run_b.sh" name="b"
+    }
+    // Bottom row: Workers (c, d, e, f)
+    pane split_direction="horizontal" {
+        pane command="startup_scripts/run_c.sh" name="c"
+        pane command="startup_scripts/run_d.sh" name="d"
+        pane command="startup_scripts/run_e.sh" name="e"
+        pane command="startup_scripts/run_f.sh" name="f"
+    }
+}

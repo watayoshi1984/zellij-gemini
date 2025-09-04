@@ -14,7 +14,7 @@ try {
     exit
 }
 
-$command = "cd '$wslPath' && chmod +x startup_scripts/*.sh ask_tree.sh && echo 'Please set your API keys (Gemini or Claude) in the startup_scripts/run_*.sh files.' && echo 'After setting the API keys, run the following command to start Zellij:' && echo 'zellij --layout layout.yaml'"
+$command = "cd '$wslPath' && echo 'Cleaning up existing Zellij sessions...' && pkill -f zellij 2>/dev/null || true && sleep 1 && chmod +x startup_scripts/*.sh ask_tree.sh && echo 'Please set your API keys (Gemini or Claude) in the startup_scripts/run_*.sh files.' && echo 'After setting the API keys, run the following command to start Zellij:' && echo 'zellij --layout layout.yaml'"
 
 wsl.exe -- bash -c $command
 

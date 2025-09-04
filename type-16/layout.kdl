@@ -1,0 +1,39 @@
+layout {
+    pane size=1 borderless=true {
+        plugin location="zellij:tab-bar"
+    }
+    // President pane (a)
+    pane command="startup_scripts/run_a.sh" name="a"
+    pane split_direction="horizontal" {
+        // Boss panes (b, f, j, n)
+        pane command="startup_scripts/run_b.sh" name="b"
+        pane command="startup_scripts/run_f.sh" name="f"
+        pane command="startup_scripts/run_j.sh" name="j"
+        pane command="startup_scripts/run_n.sh" name="n"
+    }
+    pane split_direction="horizontal" {
+        // Worker group 1 (c, d, e)
+        pane split_direction="vertical" {
+            pane command="startup_scripts/run_c.sh" name="c"
+            pane command="startup_scripts/run_d.sh" name="d"
+            pane command="startup_scripts/run_e.sh" name="e"
+        }
+        // Worker group 2 (g, h, i)
+        pane split_direction="vertical" {
+            pane command="startup_scripts/run_g.sh" name="g"
+            pane command="startup_scripts/run_h.sh" name="h"
+            pane command="startup_scripts/run_i.sh" name="i"
+        }
+        // Worker group 3 (k, l, m)
+        pane split_direction="vertical" {
+            pane command="startup_scripts/run_k.sh" name="k"
+            pane command="startup_scripts/run_l.sh" name="l"
+            pane command="startup_scripts/run_m.sh" name="m"
+        }
+        // Worker group 4 (o, p)
+        pane split_direction="vertical" {
+            pane command="startup_scripts/run_o.sh" name="o"
+            pane command="startup_scripts/run_p.sh" name="p"
+        }
+    }
+}

@@ -15,77 +15,79 @@ Worker D用タスク: 将来展望や影響について
 各タスクを「Worker B: [具体的なタスク]」の形式で1行ずつ出力してください。"
 
 echo "PRESIDENT: タスク分解中..."
-gemini -p "$TASK_DECOMPOSITION_PROMPT"
+# Geminiからの出力を変数に保存
+DECOMPOSED_TASKS=$(gemini -p "$TASK_DECOMPOSITION_PROMPT")
+echo "$DECOMPOSED_TASKS"
+
+# 各Workerのタスクを抽出
+TASK_B=$(echo "$DECOMPOSED_TASKS" | grep "Worker B:" | sed 's/Worker B: //')
+TASK_C=$(echo "$DECOMPOSED_TASKS" | grep "Worker C:" | sed 's/Worker C: //')
+TASK_D=$(echo "$DECOMPOSED_TASKS" | grep "Worker D:" | sed 's/Worker D: //')
 
 echo ""
 echo "PRESIDENT: 各Workerにタスクを割り当てます..."
 
-# 現在のZellijバージョンに対応したペイン間通信関数
+# Zellijペイン間通信関数 (名前でフォーカス)
 focus_pane_and_execute() {
-    local target_pane="$1"
+    local target_pane_name="$1"
     local cmd_to_run="$2"
     
-    echo ">>> Worker $target_pane で実行中: $cmd_to_run"
+    echo ">>> Worker $target_pane_name で実行中: $cmd_to_run"
     
-    # レイアウトに基づく正しいペインフォーカス移動
-    case "$target_pane" in
-        "b")
-            zellij action move-focus down
-            ;;
-        "c") 
-            zellij action move-focus down
-            zellij action move-focus right  # bを経由してcへ
-            ;;
-        "d")
-            zellij action move-focus down
-            zellij action move-focus down  # 最下段のdペインへ
-            ;;
-    esac
+    # 名前でペインにフォーカス
+    zellij action focus-pane-name "$target_pane_name"
     
-    # コマンドを実行
+    # コマンドを書き込む
     zellij action write-chars "$cmd_to_run"
     
     # Enterキーを押してコマンド実行
     zellij action write 13  # ASCII 13 = Enter
     
     # 元のペイン（President）に戻る
-    case "$target_pane" in
-        "b")
-            zellij action move-focus up
-            ;;
-        "c") 
-            zellij action move-focus left
-            zellij action move-focus up
-            ;;
-        "d")
-            zellij action move-focus up
-            zellij action move-focus up
-            ;;
-    esac
+    zellij action focus-pane-name "a"
     
-    sleep 2  # 実行結果を待つ
+    sleep 2 # コマンド実行のための短い待機
 }
 
-# 各Workerに具体的なタスクを割り当て
+# シェルエスケープ関数
+quote_for_shell() {
+    echo "'$(echo "$1" | sed "s/'/'\\''/g")'"
+}
+
+# 各Workerに分解されたタスクを割り当て
 echo "================================================="
 echo ">>> WORKER B への技術的分析タスク割り当て..."
 echo "================================================="
-TASK_B="「$QUESTION」について、技術的な仕組みや実装方法の観点から分析してください。技術的詳細に焦点を当てて簡潔に回答し、完了後にPresidentに報告してください。"
-focus_pane_and_execute "b" "gemini -p '$TASK_B'"
+# TASK_Bが空でないか確認
+if [ -n "$TASK_B" ]; then
+    # シングルクォートを安全にエスケープしてコマンドを作成
+    CMD_B="gemini -p $(quote_for_shell "$TASK_B")"
+    focus_pane_and_execute "b" "$CMD_B"
+else
+    echo "Worker Bのタスクが生成されませんでした。"
+fi
 
 echo ""
 echo "================================================="
 echo ">>> WORKER C への現状動向分析タスク割り当て..."
 echo "================================================="
-TASK_C="「$QUESTION」について、現在の動向や最新情報の観点から分析してください。市場動向や最新トレンドに焦点を当てて簡潔に回答し、完了後にPresidentに報告してください。"
-focus_pane_and_execute "c" "gemini -p '$TASK_C'"
+if [ -n "$TASK_C" ]; then
+    CMD_C="gemini -p $(quote_for_shell "$TASK_C")"
+    focus_pane_and_execute "c" "$CMD_C"
+else
+    echo "Worker Cのタスクが生成されませんでした。"
+fi
 
 echo ""
 echo "================================================="
 echo ">>> WORKER D への将来展望分析タスク割り当て..."
 echo "================================================="
-TASK_D="「$QUESTION」について、将来展望や社会への影響の観点から分析してください。未来予測や影響分析に焦点を当てて簡潔に回答し、完了後にPresidentに報告してください。"
-focus_pane_and_execute "d" "gemini -p '$TASK_D'"
+if [ -n "$TASK_D" ]; then
+    CMD_D="gemini -p $(quote_for_shell "$TASK_D")"
+    focus_pane_and_execute "d" "$CMD_D"
+else
+    echo "Worker Dのタスクが生成されませんでした。"
+fi
 
 echo ""
 echo "====================================================================="
