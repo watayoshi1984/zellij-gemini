@@ -31,8 +31,9 @@ wordpress6.4・php7.4以上の環境で動作する高速化WPプラグインを
   "thought": "ユーザーの指示に基づき、bとcにタスクを割り当てる。",
   "speak": "承知しました。bとcにタスクを割り当てます。",
   "tasks": [
-    { "pane": "b", "instruction": "自己紹介をしてください。" },
-    { "pane": "c", "instruction": "あなたの役割について説明してください。" }
+    { "pane": "b", "instruction": "ここにbへの指示を入力" },
+    { "pane": "c", "instruction": "ここにcへの指示を入力 "},
+    { "pane": "d", "instruction": "ここにdへの指示を入力" }
   ]
 }
 ```
