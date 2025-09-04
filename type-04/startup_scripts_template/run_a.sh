@@ -9,7 +9,8 @@ export CLAUDE_API_KEY="${CLAUDE_API_KEY_A:-YOUR_API_KEY_FOR_A}"
 INSTRUCTION_FILE="instructions/a_president.md"
 
 # jqコマンドの存在確認
-if ! command -v jq &> /dev/null; then
+if ! command -v jq &> /dev/null;
+then
     echo "エラー: このスクリプトの実行には 'jq' が必要です。"
     echo "jqをインストールしてください。 (e.g., sudo apt-get install jq)"
     exec $SHELL
@@ -45,34 +46,36 @@ while true; do
   # gemini cliにプロンプトを渡して実行し、応答を変数に格納
   response=$(gemini -p "$full_prompt")
 
-  # 応答からMarkdownコードブロックの囲い(` ```json` と ````)を削除
-  cleaned_response=$(echo "$response" | sed -e 's/^```json//' -e 's/```$//')
+  # 応答からJSONブロックのみを抽出
+  # まず ```json ... ``` ブロックを探す
+  json_block=$(echo "$response" | awk '/```json/{flag=1; next} /```/{flag=0} flag')
 
-  # 応答がJSONで、かつ "tasks" キーを持つかチェック
-  if echo "$cleaned_response" | jq -e 'has("tasks")' > /dev/null;
+  # もし見つからなければ、裸の { ... } ブロックを探す
+  if [ -z "$json_block" ]; then
+      json_block=$(echo "$response" | awk '/{/{r=1} r; /}/{exit} ')
+  fi
+
+  # 抽出したJSONブロックが有効かチェック
+  if [ -n "$json_block" ] && echo "$json_block" | jq -e 'has("tasks")' > /dev/null;
   then
     # JSONとして処理
-    speak_text=$(echo "$cleaned_response" | jq -r '.speak // ""')
+    speak_text=$(echo "$json_block" | jq -r '.speak // ""')
     if [ -n "$speak_text" ]; then
         echo "AI: $speak_text"
     fi
 
     # タスクを実行
     echo "タスクを割り当て中..."
-    echo "$cleaned_response" | jq -c '.tasks[]' | while read -r task;
+    echo "$json_block" | jq -c '.tasks[]' | while read -r task;
     do
       pane_name=$(echo "$task" | jq -r '.pane')
       instruction_text=$(echo "$task" | jq -r '.instruction')
 
-      # geminiコマンドを組み立てる
       command_to_send="gemini -p \"${instruction_text}\""
-      
-      # 対応するパイプファイルのパス
       pipe_file="/tmp/zellij_gemini_pane_${pane_name}"
 
       echo "  - ペイン '${pane_name}' へ指示: ${instruction_text}"
       
-      # パイプにコマンドを書き込む
       if [ -p "$pipe_file" ]; then
         echo "$command_to_send" > "$pipe_file"
       else
@@ -80,7 +83,7 @@ while true; do
       fi
     done
   else
-    # 通常のテキストとして表示
+    # JSONが見つからなかった場合、元の応答をそのまま表示
     echo "AI: $response"
   fi
 
