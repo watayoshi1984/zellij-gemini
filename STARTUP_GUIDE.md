@@ -1,4 +1,9 @@
 # Zellij-Gemini プロジェクト 起動・運用ガイド
+cd type-04 && ./setup_env.sh
+zellij --layout layout.kdl
+
+
+
 
 ## 概要
 このガイドでは、任意の場所からPowerShellを起動した状態から、Zellij-GeminiプロジェクトのZellijおよびTmuxの分割ペインセットアップ、起動、シャットダウン、メンテナンスまでの全コマンドを説明します。
