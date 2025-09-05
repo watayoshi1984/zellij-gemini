@@ -27,26 +27,25 @@ TASK_D=$(echo "$DECOMPOSED_TASKS" | grep "Worker D:" | sed 's/Worker D: //')
 echo ""
 echo "PRESIDENT: 各Workerにタスクを割り当てます..."
 
-# Zellijペイン間通信関数 (名前でフォーカス)
+# Zellijペイン間通信関数 (名前付きパイプ使用)
 focus_pane_and_execute() {
     local target_pane_name="$1"
     local cmd_to_run="$2"
     
     echo ">>> Worker $target_pane_name で実行中: $cmd_to_run"
     
-    # 名前でペインにフォーカス
-    zellij action focus-pane-name "$target_pane_name"
+    # パイプファイルにコマンドを送信
+    local pipe_file="/tmp/zellij_gemini_pane_$target_pane_name"
     
-    # コマンドを書き込む
-    zellij action write-chars "$cmd_to_run"
+    if [ -p "$pipe_file" ]; then
+        echo "$cmd_to_run" > "$pipe_file"
+        echo "タスクをWorker $target_pane_name に送信しました"
+    else
+        echo "エラー: パイプファイル $pipe_file が見つかりません"
+        return 1
+    fi
     
-    # Enterキーを押してコマンド実行
-    zellij action write 13  # ASCII 13 = Enter
-    
-    # 元のペイン（President）に戻る
-    zellij action focus-pane-name "a"
-    
-    sleep 2 # コマンド実行のための短い待機
+    sleep 1 # コマンド送信のための短い待機
 }
 
 # シェルエスケープ関数

@@ -138,7 +138,7 @@ gemini session start
 ```
 
 **修正後:**
-```bash
+```
 echo "Gemini is ready for interactive use. Use 'gemini -p \"your prompt\"' for single queries."
 ```
 

@@ -44,6 +44,9 @@ Get-Location
 # type-04ディレクトリに移動して起動
 cd type-04
 .\master-setup.ps1
+wsl -d ubuntu
+./setup_env.sh
+zellij --layout layout.kdl
 ```
 
 #### type-06 (6分割)
@@ -51,6 +54,9 @@ cd type-04
 # type-06ディレクトリに移動して起動
 cd type-06
 .\master-setup.ps1
+wsl -d ubuntu
+./setup_env.sh
+zellij --layout layout.kdl
 ```
 
 #### type-08 (8分割)

@@ -44,11 +44,41 @@ rm -rf startup_scripts
 rm -f log
 echo "クリーンアップ完了。"
 
+# 依存パッケージの更新・インストール
+echo "依存パッケージの確認とインストール（必要に応じて更新）..."
+if [ "$(id -u)" -ne 0 ]; then SUDO="sudo"; else SUDO=""; fi
+
+if command -v apt-get >/dev/null 2>&1; then
+  export DEBIAN_FRONTEND=noninteractive
+  $SUDO apt-get update -y
+  $SUDO apt-get install -y --no-install-recommends jq bat ripgrep tmux curl ca-certificates
+  # Ubuntu/Debian系では bat バイナリ名が batcat のことがあるため、存在時はシンボリックリンクを作成
+  if ! command -v bat >/dev/null 2>&1 && command -v batcat >/dev/null 2>&1; then
+    if [ ! -x /usr/local/bin/bat ]; then
+      $SUDO ln -s "$(command -v batcat)" /usr/local/bin/bat || true
+    fi
+  fi
+  $SUDO apt-get clean
+  $SUDO rm -rf /var/lib/apt/lists/*
+elif command -v dnf >/dev/null 2>&1; then
+  $SUDO dnf -y makecache
+  $SUDO dnf -y install jq bat ripgrep tmux curl ca-certificates
+elif command -v pacman >/dev/null 2>&1; then
+  $SUDO pacman -Sy --noconfirm jq bat ripgrep tmux curl ca-certificates
+else
+  echo "注意: 対応するパッケージマネージャを検出できませんでした。jq, bat, ripgrep, tmux を手動でインストールしてください。"
+fi
+
+# Gemini CLI の存在確認（未導入時の注意喚起）
+if ! command -v gemini >/dev/null 2>&1; then
+  echo "注意: 'gemini' CLI が見つかりません。Gemini CLI のインストールを行ってください。"
+fi
+
 # startup_scriptsディレクトリを作成
 mkdir -p startup_scripts
 
 # テンプレートからstartup_scriptsにコピー
-echo "startup_scriptsファイルを生成中..."
+echo "ビルド（startup_scripts生成）を実行中..."
 
 for script in startup_scripts_template/run_*.sh; do
     if [ -f "$script" ]; then

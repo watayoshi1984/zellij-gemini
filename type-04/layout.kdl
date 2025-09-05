@@ -4,15 +4,27 @@ layout {
     }
     pane {
         // President pane (a)
-        pane command="startup_scripts/run_a.sh" name="a"
+        pane command="/usr/bin/bash" {
+            args "startup_scripts/run_a.sh"
+        }
+        name "a"
     }
     pane split_direction="vertical" {
         // Boss panes (b, c)
-        pane command="startup_scripts/run_b.sh" name="b"
-        pane command="startup_scripts/run_c.sh" name="c"
+        pane command="/usr/bin/bash" {
+            args "startup_scripts/run_b.sh"
+        }
+        name "b"
+        pane command="/usr/bin/bash" {
+            args "startup_scripts/run_c.sh"
+        }
+        name "c"
     }
     pane {
         // Worker pane (d)
-        pane command="startup_scripts/run_d.sh" name="d"
+        pane command="/usr/bin/bash" {
+            args "startup_scripts/run_d.sh"
+        }
+        name "d"
     }
 }
