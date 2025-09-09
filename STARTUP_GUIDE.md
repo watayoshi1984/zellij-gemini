@@ -38,7 +38,7 @@ Get-Location
 - **type-16**: 16分割（エンタープライズレベル）
 
 ### 2.2 Zellij起動コマンド
-
+cd "C:\Users\wyosh\OneDrive\ドキュメント\zellij-gemini"
 #### type-04 (4分割)
 ```powershell
 # type-04ディレクトリに移動して起動
@@ -47,6 +47,11 @@ cd type-04
 wsl -d ubuntu
 ./setup_env.sh
 zellij --layout layout.kdl
+# 例：プロジェクト分析の指示
+./ask_flat.sh "新しいWebアプリケーションの要件を分析してください"
+
+# 例：技術調査の指示
+./ask_flat.sh "最新のReact開発のベストプラクティスを調査してください"
 ```
 
 #### type-06 (6分割)

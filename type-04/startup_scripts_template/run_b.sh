@@ -55,6 +55,42 @@ echo "[DEBUG] GEMINI_API_KEY設定: $([ -n "$GEMINI_API_KEY" ] && echo "あり" 
 echo "[DEBUG] jq利用可能: $(command -v jq >/dev/null 2>&1 && echo "あり" || echo "なし")" >> ${PANE_NAME}.log
 echo "[DEBUG] gemini CLI利用可能: $(command -v gemini >/dev/null 2>&1 && echo "あり" || echo "なし")" >> ${PANE_NAME}.log
 
+# Presidentへの報告送信関数
+send_report_to_president() {
+  local job_id="$1"
+  local output_file="$2"
+  local success="$3"
+  local content="$4"
+  
+  # Presidentへの報告パイプ
+  local president_pipe="/tmp/zellij_gemini_pane_a"
+  
+  if [ -p "$president_pipe" ]; then
+    # JSON形式で報告を作成
+    local report=$(jq -n \
+      --arg job_id "$job_id" \
+      --arg pane "$PANE_NAME" \
+      --arg filename "$output_file" \
+      --arg content "$content" \
+      --argjson success "$success" \
+      --argjson attempts 1 \
+      '{
+        job_id: $job_id,
+        pane: $pane,
+        filename: $filename,
+        content: $content,
+        success: ($success | tonumber),
+        attempts: ($attempts | tonumber)
+      }')
+    
+    # Presidentに報告を送信
+    echo "$report" > "$president_pipe"
+    echo "[DEBUG] Presidentに報告送信: $report" >> ${PANE_NAME}.log
+  else
+    echo "[WARNING] Presidentパイプが見つかりません: $president_pipe" >> ${PANE_NAME}.log
+  fi
+}
+
 # パイプからコマンドを読み込んで実行するループ
 while true; do
   # パイプが開かれるまでcatは待機する
@@ -68,10 +104,28 @@ while true; do
     echo "[DEBUG] コマンド受信: $(date)" >> ${PANE_NAME}.log
     echo "[DEBUG] コマンド長: ${#command_to_run} 文字" >> ${PANE_NAME}.log
     echo "--- [実行開始] ---"
-    eval "$command_to_run"
+    
+    # タイムスタンプ付きの出力ファイル名を生成
+    timestamp=$(date +"%Y%m%d_%H%M%S")
+    output_file="artifacts/${PANE_NAME}_${timestamp}.txt"
+    job_id="${timestamp}"
+    
+    # コマンドを実行し、出力をファイルに保存
+    eval "$command_to_run" > "$output_file" 2>&1
     exit_code=$?
+    
+    # 出力内容を読み込み（報告用）
+    output_content=$(cat "$output_file" 2>/dev/null || echo "出力ファイルの読み込みに失敗")
+    
     echo "[DEBUG] コマンド実行完了: 終了コード=$exit_code" >> ${PANE_NAME}.log
-    echo "--- [実行完了] ---"
+    echo "--- [実行完了] 終了コード=$exit_code ---"
+    echo "出力ファイル: $output_file"
+    
+    # Presidentに完了報告を送信
+    success_flag=$([ $exit_code -eq 0 ] && echo "1" || echo "0")
+    send_report_to_president "$job_id" "$output_file" "$success_flag" "$output_content"
+    
+    echo "Presidentに完了報告を送信しました"
     echo ""
     echo "次の指示を待っています..."
   fi
